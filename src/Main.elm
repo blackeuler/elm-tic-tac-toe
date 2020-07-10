@@ -32,10 +32,10 @@ view model =
         [ style "height" "100vh"
         ]
         (if winnerp model.board then
-            [ h1 [] [ text ((showValue <|switchTurn model.turn) ++ " Winner") ], button [onClick ResetGame] [text "Play Again"] ]
+            [ h1 [] [ text ((showValue <| switchTurn model.turn) ++ " Winner") ], button [ onClick ResetGame ] [ text "Play Again" ] ]
 
          else
-            [ viewBoard model.board ]
+            [ viewBoard model.board, button [ onClick ResetGame ] [ text "Reset " ] ]
         )
 
 
@@ -44,8 +44,12 @@ update msg model =
     case msg of
         CellClicked pos ->
             { model | board = updateBoard model.board pos model.turn, turn = switchTurn model.turn }
+
         ResetGame ->
             init
+
+        CantEdit ->
+            model
 
 
 updateBoard : Board -> Pos -> Value -> Board
@@ -87,7 +91,9 @@ type alias Board =
 
 
 type Msg
-    = CellClicked Pos | ResetGame
+    = CellClicked Pos
+    | ResetGame
+    | CantEdit
 
 
 initialBoard : Board
@@ -132,11 +138,13 @@ majorDiag b =
     else
         List.all (\val -> val == head) mjV
 
+
 minorDiagWin : Board -> Bool
 minorDiagWin b =
-    minorDiag b |>
-    getValues |>
-    sameButNothing
+    minorDiag b
+        |> getValues
+        |> sameButNothing
+
 
 minorDiag : Board -> Board
 minorDiag b =
@@ -222,8 +230,18 @@ createGrid rows cols =
             "repeat("
                 ++ String.fromInt cols
                 ++ ",auto)"
-        , style "height" "100vh"
+        , style "height" "60vh"
         ]
+
+
+editable : Cell -> Bool
+editable c =
+    case c.val of
+        Nothing ->
+            True
+
+        Just _ ->
+            False
 
 
 placeCell : Cell -> Html Msg
@@ -231,21 +249,33 @@ placeCell cell =
     div
         [ style "grid-column" <| String.fromInt cell.pos.x
         , style "grid-row" <| String.fromInt cell.pos.y
+        , style "border" "solid black 1px"
+        , if editable cell then
+            onClick (CellClicked cell.pos)
+
+          else
+            onClick CantEdit
         ]
         [ case cell.val of
             Nothing ->
-                div [ onClick (Debug.log "Clicked" (CellClicked cell.pos)) ]
-                    [ text (String.fromInt cell.pos.x ++ "," ++ String.fromInt cell.pos.y) ]
+                div [ style "width" "30px", style "height" "30px" ]
+                    []
 
             Just v ->
-               text ( showValue v)
+                text (showValue v)
         ]
+
 
 showValue : Value -> String
 showValue v =
     case v of
-        X -> "X"
-        O -> "O"
+        X ->
+            "X"
+
+        O ->
+            "O"
+
+
 placeContent : List (Html.Html Msg) -> Pos -> Html Msg
 placeContent stuff pos =
     div

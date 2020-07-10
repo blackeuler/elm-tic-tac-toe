@@ -5232,16 +5232,19 @@ var $author$project$Main$updateBoard = F3(
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'CellClicked') {
-			var pos = msg.a;
-			return _Utils_update(
-				model,
-				{
-					board: A3($author$project$Main$updateBoard, model.board, pos, model.turn),
-					turn: $author$project$Main$switchTurn(model.turn)
-				});
-		} else {
-			return $author$project$Main$init;
+		switch (msg.$) {
+			case 'CellClicked':
+				var pos = msg.a;
+				return _Utils_update(
+					model,
+					{
+						board: A3($author$project$Main$updateBoard, model.board, pos, model.turn),
+						turn: $author$project$Main$switchTurn(model.turn)
+					});
+			case 'ResetGame':
+				return $author$project$Main$init;
+			default:
+				return model;
 		}
 	});
 var $author$project$Main$ResetGame = {$: 'ResetGame'};
@@ -5290,11 +5293,20 @@ var $author$project$Main$createGrid = F2(
 					$elm$html$Html$Attributes$style,
 					'grid-template-columns',
 					'repeat(' + ($elm$core$String$fromInt(cols) + ',auto)')),
-					A2($elm$html$Html$Attributes$style, 'height', '100vh')
+					A2($elm$html$Html$Attributes$style, 'height', '60vh')
 				]));
 	});
+var $author$project$Main$CantEdit = {$: 'CantEdit'};
 var $author$project$Main$CellClicked = function (a) {
 	return {$: 'CellClicked', a: a};
+};
+var $author$project$Main$editable = function (c) {
+	var _v0 = c.val;
+	if (_v0.$ === 'Nothing') {
+		return true;
+	} else {
+		return false;
+	}
 };
 var $author$project$Main$placeCell = function (cell) {
 	return A2(
@@ -5308,7 +5320,10 @@ var $author$project$Main$placeCell = function (cell) {
 				A2(
 				$elm$html$Html$Attributes$style,
 				'grid-row',
-				$elm$core$String$fromInt(cell.pos.y))
+				$elm$core$String$fromInt(cell.pos.y)),
+				A2($elm$html$Html$Attributes$style, 'border', 'solid black 1px'),
+				$author$project$Main$editable(cell) ? $elm$html$Html$Events$onClick(
+				$author$project$Main$CellClicked(cell.pos)) : $elm$html$Html$Events$onClick($author$project$Main$CantEdit)
 			]),
 		_List_fromArray(
 			[
@@ -5319,17 +5334,10 @@ var $author$project$Main$placeCell = function (cell) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick(
-								A2(
-									$elm$core$Debug$log,
-									'Clicked',
-									$author$project$Main$CellClicked(cell.pos)))
+								A2($elm$html$Html$Attributes$style, 'width', '30px'),
+								A2($elm$html$Html$Attributes$style, 'height', '30px')
 							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								$elm$core$String$fromInt(cell.pos.x) + (',' + $elm$core$String$fromInt(cell.pos.y)))
-							]));
+						_List_Nil);
 				} else {
 					var v = _v0.a;
 					return $elm$html$Html$text(
@@ -5557,7 +5565,17 @@ var $author$project$Main$view = function (model) {
 					]))
 			]) : _List_fromArray(
 			[
-				$author$project$Main$viewBoard(model.board)
+				$author$project$Main$viewBoard(model.board),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$ResetGame)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Reset ')
+					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(
