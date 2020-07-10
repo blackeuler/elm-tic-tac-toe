@@ -1,0 +1,40 @@
+
+src/Main.elm,1183
+module MainMain1,0
+type alias Pos =type9,173
+type alias PosPos9,173
+type alias Model =type13,217
+type alias ModelModel13,217
+main =main18,302
+init =init26,411
+view model =view30,459
+update msg model =update43,786
+updateBoard board pos v =updateBoard52,1034
+type alias Cell =type64,1289
+type alias CellCell64,1289
+type ValueValue70,1355
+    = XX71,1366
+    | OO72,1374
+switchTurn v =switchTurn76,1412
+type alias Board =type85,1498
+type alias BoardBoard85,1498
+type MsgMsg89,1533
+    = CellClickedCellClicked90,1542
+initialBoard =initialBoard94,1599
+winnerp b =winnerp108,2078
+majorDiag b =majorDiag113,2182
+minorDiagWin b =minorDiagWin136,2630
+minorDiag b =minorDiag142,2730
+horizontal b =horizontal147,2895
+vertical b =vertical154,3053
+row r b =row161,3212
+col r b =col166,3297
+sameButNothing lst =sameButNothing171,3394
+getValues c =getValues189,3724
+viewBoard board =viewBoard194,3805
+showCell cell =showCell199,3900
+cellContent str =cellContent209,4121
+createGrid rows cols =createGrid214,4229
+placeCell cell =placeCell230,4628
+showValue v =showValue245,5095
+placeContent stuff pos =placeContent250,5212
