@@ -5307,65 +5307,13 @@ var $author$project$Main$createGrid = F2(
 					$elm$html$Html$Attributes$style,
 					'grid-template-columns',
 					'repeat(' + ($elm$core$String$fromInt(cols) + ',auto)')),
-					A2($elm$html$Html$Attributes$style, 'height', '60vh')
+					A2($elm$html$Html$Attributes$style, 'height', '50vh'),
+					A2($elm$html$Html$Attributes$style, 'width', '50vh')
 				]));
 	});
 var $author$project$Main$CantEdit = {$: 'CantEdit'};
 var $author$project$Main$CellClicked = function (a) {
 	return {$: 'CellClicked', a: a};
-};
-var $author$project$Main$editable = function (c) {
-	var _v0 = c.val;
-	if (_v0.$ === 'Nothing') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $author$project$Main$placeCell = function (cell) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$Attributes$style,
-				'grid-column',
-				$elm$core$String$fromInt(cell.pos.x)),
-				A2(
-				$elm$html$Html$Attributes$style,
-				'grid-row',
-				$elm$core$String$fromInt(cell.pos.y)),
-				A2($elm$html$Html$Attributes$style, 'border', 'solid black 1px'),
-				$author$project$Main$editable(cell) ? $elm$html$Html$Events$onClick(
-				$author$project$Main$CellClicked(cell.pos)) : $elm$html$Html$Events$onClick($author$project$Main$CantEdit)
-			]),
-		_List_fromArray(
-			[
-				function () {
-				var _v0 = cell.val;
-				if (_v0.$ === 'Nothing') {
-					return A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'width', '30px'),
-								A2($elm$html$Html$Attributes$style, 'height', '30px')
-							]),
-						_List_Nil);
-				} else {
-					var v = _v0.a;
-					return $elm$html$Html$text(
-						$author$project$Main$showValue(v));
-				}
-			}()
-			]));
-};
-var $author$project$Main$viewBoard = function (board) {
-	return A3(
-		$author$project$Main$createGrid,
-		3,
-		3,
-		A2($elm$core$List$map, $author$project$Main$placeCell, board));
 };
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
@@ -5549,12 +5497,84 @@ var $author$project$Main$vertical = function (b) {
 var $author$project$Main$winnerp = function (b) {
 	return $author$project$Main$majorDiag(b) || ($author$project$Main$horizontal(b) || ($author$project$Main$vertical(b) || $author$project$Main$minorDiagWin(b)));
 };
+var $author$project$Main$editable = F2(
+	function (c, board) {
+		if ($author$project$Main$winnerp(board)) {
+			return false;
+		} else {
+			var _v0 = c.val;
+			if (_v0.$ === 'Nothing') {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	});
+var $author$project$Main$placeCell = F2(
+	function (board, cell) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$Attributes$style,
+					'grid-column',
+					$elm$core$String$fromInt(cell.pos.x)),
+					A2(
+					$elm$html$Html$Attributes$style,
+					'grid-row',
+					$elm$core$String$fromInt(cell.pos.y)),
+					A2($elm$html$Html$Attributes$style, 'border', 'solid black 1px'),
+					A2($elm$html$Html$Attributes$style, 'font-size', '60px'),
+					A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+					A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+					A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+					A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+					A2($author$project$Main$editable, cell, board) ? $elm$html$Html$Events$onClick(
+					$author$project$Main$CellClicked(cell.pos)) : $elm$html$Html$Events$onClick($author$project$Main$CantEdit)
+				]),
+			_List_fromArray(
+				[
+					function () {
+					var _v0 = cell.val;
+					if (_v0.$ === 'Nothing') {
+						return A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$style, 'width', '30px'),
+									A2($elm$html$Html$Attributes$style, 'height', '30px')
+								]),
+							_List_Nil);
+					} else {
+						var v = _v0.a;
+						return $elm$html$Html$text(
+							$author$project$Main$showValue(v));
+					}
+				}()
+				]));
+	});
+var $author$project$Main$viewBoard = function (board) {
+	return A3(
+		$author$project$Main$createGrid,
+		3,
+		3,
+		A2(
+			$elm$core$List$map,
+			$author$project$Main$placeCell(board),
+			board));
+};
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				A2($elm$html$Html$Attributes$style, 'height', '100vh')
+				A2($elm$html$Html$Attributes$style, 'height', '100vh'),
+				A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+				A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+				A2($elm$html$Html$Attributes$style, 'justify-contents', 'center'),
+				A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+				A2($elm$html$Html$Attributes$style, 'padding', '20px')
 			]),
 		$author$project$Main$winnerp(model.board) ? _List_fromArray(
 			[
@@ -5565,8 +5585,9 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$text(
 						$author$project$Main$showValue(
-							$author$project$Main$switchTurn(model.turn)) + ' Winner')
+							$author$project$Main$switchTurn(model.turn)) + ' is the Winner')
 					])),
+				$author$project$Main$viewBoard(model.board),
 				A2(
 				$elm$html$Html$button,
 				_List_fromArray(
@@ -5579,6 +5600,13 @@ var $author$project$Main$view = function (model) {
 					]))
 			]) : _List_fromArray(
 			[
+				A2(
+				$elm$html$Html$h1,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Tic Tac Toe')
+					])),
 				$author$project$Main$viewBoard(model.board),
 				A2(
 				$elm$html$Html$button,
