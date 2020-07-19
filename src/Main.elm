@@ -30,12 +30,23 @@ init =
 view model =
     div
         [ style "height" "100vh"
+        , style "display" "flex"
+        , style "flex-direction" "column"
+        , style "justify-contents" "center"
+        , style "align-items" "center"
+        , style "padding" "20px"
         ]
         (if winnerp model.board then
-            [ h1 [] [ text ((showValue <| switchTurn model.turn) ++ " Winner") ], button [ onClick ResetGame ] [ text "Play Again" ] ]
+            [ h1 [] [ text ((showValue <| switchTurn model.turn) ++ " is the Winner") ]
+            , viewBoard model.board
+            , button [ onClick ResetGame ] [ text "Play Again" ]
+            ]
 
          else
-            [ viewBoard model.board, button [ onClick ResetGame ] [ text "Reset " ] ]
+            [ h1 [] [ text "Tic Tac Toe" ]
+            , viewBoard model.board
+            , button [ onClick ResetGame ] [ text "Reset " ]
+            ]
         )
 
 
@@ -200,22 +211,7 @@ getValues c =
 
 viewBoard : Board -> Html Msg
 viewBoard board =
-    createGrid 3 3 <| List.map placeCell board
-
-
-showCell : Cell -> Html Msg
-showCell cell =
-    case cell.val of
-        Nothing ->
-            placeContent [ cellContent "lkj " ] cell.pos
-
-        Just v ->
-            placeContent [ cellContent "V" ] cell.pos
-
-
-cellContent : String -> Html msg
-cellContent str =
-    h1 [] [ text str ]
+    createGrid 3 3 <| List.map (placeCell board) board
 
 
 createGrid : Int -> Int -> List (Html.Html Msg) -> Html.Html Msg
@@ -230,27 +226,37 @@ createGrid rows cols =
             "repeat("
                 ++ String.fromInt cols
                 ++ ",auto)"
-        , style "height" "60vh"
+        , style "height" "50vh"
+        , style "width" "50vh"
         ]
 
 
-editable : Cell -> Bool
-editable c =
-    case c.val of
-        Nothing ->
-            True
+editable : Cell -> Board -> Bool
+editable c board =
+    if winnerp board then
+        False
 
-        Just _ ->
-            False
+    else
+        case c.val of
+            Nothing ->
+                True
+
+            Just _ ->
+                False
 
 
-placeCell : Cell -> Html Msg
-placeCell cell =
+placeCell : Board -> Cell -> Html Msg
+placeCell board cell =
     div
         [ style "grid-column" <| String.fromInt cell.pos.x
         , style "grid-row" <| String.fromInt cell.pos.y
         , style "border" "solid black 1px"
-        , if editable cell then
+        , style "font-size" "60px"
+        , style "text-align" "center"
+        , style "display" "flex"
+        , style "justify-content" "center"
+        , style "align-items" "center"
+        , if editable cell board then
             onClick (CellClicked cell.pos)
 
           else
